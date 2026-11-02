@@ -1,5 +1,7 @@
 # Argon API-Kostenrechner
 
+**Live: https://argon-kostenrechner.netlify.app**
+
 Rechner für die Token-Kosten von Gemini 4 Argon über die API, im Vergleich zur
 Abo-Pauschale. Die beiden Preisstufen — bis 30.11.2026 und ab 01.12.2026, wenn
 sich der Satz verdoppelt — stehen nebeneinander.
@@ -52,15 +54,19 @@ Kein Server nötig — die Datei läuft direkt im Browser.
 
 ## Deployment
 
-Netlify veröffentlicht das Repository-Wurzelverzeichnis ohne Build-Schritt;
-die Konfiguration steht in `netlify.toml`. Ein Push auf `main` löst ein neues
-Deployment aus.
+Netlify veröffentlicht das Wurzelverzeichnis ohne Build-Schritt; die
+Konfiguration steht in `netlify.toml`.
 
-Manuell per CLI:
+Die Site wurde per CLI angelegt (`argon-kostenrechner`, Team AIX2 Advisory)
+und wird per CLI aktualisiert:
 
 ```bash
 npx netlify-cli deploy --prod --dir .
 ```
+
+Ein Push auf GitHub löst **kein** Deployment aus. Wer das will, verbindet das
+Repo einmalig in Netlify unter *Project configuration → Build & deploy →
+Link repository*; danach deployt jeder Push auf `main` automatisch.
 
 ## Preise aktualisieren
 
