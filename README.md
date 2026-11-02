@@ -73,3 +73,9 @@ Link repository*; danach deployt jeder Push auf `main` automatisch.
 Die Preisstufen stehen als `REGIMES` am Anfang des `<script>`-Blocks in
 `index.html`, die Profile direkt darunter als `PRESETS`. Der Rabatt auf
 gecachten Input ist in der Funktion `calc` als Faktor `0.05` hinterlegt.
+
+## Lizenz
+
+[MIT](LICENSE) — Weiterverwendung und Anpassung erlaubt, Haftung
+ausgeschlossen. Die Preisangaben sind unverbindlich und ersetzen keine
+Kalkulation auf Basis von Googles offizieller Preisliste.
