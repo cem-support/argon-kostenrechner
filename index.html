@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Argon API-Kostenrechner</title>
+<meta name="description" content="Rechner für die Token-Kosten von Gemini 4 Argon über die API, mit den Preisstufen vor und nach dem 1. Dezember 2026 im Vergleich zur Abo-Pauschale.">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="Argon API-Kostenrechner">
+<meta property="og:description" content="Was kostet Gemini 4 Argon über die API? Token-Kosten gegen Abo-Pauschale, mit sechs Nutzungsprofilen.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230d6a68'/%3E%3Cg fill='white'%3E%3Crect x='8' y='7' width='16' height='6' rx='1.5'/%3E%3Crect x='8' y='16' width='6' height='3' rx='1'/%3E%3Crect x='18' y='16' width='6' height='3' rx='1'/%3E%3Crect x='8' y='22' width='6' height='3' rx='1'/%3E%3Crect x='18' y='22' width='6' height='3' rx='1'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  /* Reset */
+  :root {
+    color-scheme: light;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  body { margin: 0; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+
+  /* Layout: einspaltig, max 940px — Regler oben, darunter die zwei Preisstufen nebeneinander */
+  :root {
+    --bg: #f6f8fa;
+    --surface: #ffffff;
+    --surface-2: #edf1f5;
+    --fg: #131a21;
+    --muted: #5c6874;
+    --line: #dce3ea;
+    --accent: #0d6a68;
+    --accent-soft: #dcecec;
+    --warn: #8a5300;
+    --warn-soft: #f7ecd9;
+    --font-ui: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0e1318;
+      --surface: #161d24;
+      --surface-2: #1d262e;
+      --fg: #e4eaf0;
+      --muted: #8d99a5;
+      --line: #273139;
+      --accent: #45b6b0;
+      --accent-soft: #12302f;
+      --warn: #e0a444;
+      --warn-soft: #32260f;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0e1318;
+    --surface: #161d24;
+    --surface-2: #1d262e;
+    --fg: #e4eaf0;
+    --muted: #8d99a5;
+    --line: #273139;
+    --accent: #45b6b0;
+    --accent-soft: #12302f;
+    --warn: #e0a444;
+    --warn-soft: #32260f;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-ui);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 940px;
+    margin: 0 auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 24px 56px;
+  }
+  .topbar { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+  .theme-btn {
+    font: inherit;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 10px;
+  }
+  h1 {
+    font-size: clamp(26px, 5vw, 36px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    text-wrap: balance;
+    margin: 0 0 10px;
+  }
+  .lede {
+    color: var(--muted);
+    max-width: 62ch;
+    margin: 0 0 32px;
+  }
+  h2 {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 14px;
+  }
+  section { margin-bottom: 30px; }
+
+  /* Presets */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    font: inherit;
+    font-size: 13px;
+    padding: 7px 13px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--fg);
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  .chip:hover { border-color: var(--accent); }
+  .chip[aria-pressed="true"] {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .chip.chip--warn[aria-pressed="true"] {
+    background: var(--warn-soft);
+    border-color: var(--warn);
+    color: var(--warn);
+  }
+
+  /* Controls */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 18px;
+  }
+  .field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .field label { font-size: 13px; font-weight: 500; }
+  .field .hint { font-size: 12px; color: var(--muted); }
+  .field input {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+    padding: 9px 11px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: var(--surface-2);
+    color: var(--fg);
+    width: 100%;
+  }
+  .field input:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    border-color: var(--accent);
+  }
+  .chip:focus-visible, .theme-btn:focus-visible, a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* Result cards */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 20px;
+    min-width: 0;
+  }
+  .card--later { border-color: var(--warn); }
+  .card .regime {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 2px;
+  }
+  .card--later .regime { color: var(--warn); }
+  .card .rates {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0 0 16px;
+  }
+  .big {
+    font-family: var(--font-mono);
+    font-size: clamp(30px, 6vw, 40px);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+  .big-sub {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 16px;
+  }
+  .rows { display: flex; flex-direction: column; gap: 0; }
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    padding: 7px 0;
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+  }
+  .row .k { color: var(--muted); min-width: 0; }
+  .row .v {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+  .row--total .v { color: var(--accent); }
+  .card--later .row--total .v { color: var(--warn); }
+
+  /* Verdict */
+  .verdict {
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    font-size: 14px;
+  }
+  .verdict strong { font-weight: 600; }
+  .verdict.is-warn { border-left-color: var(--warn); background: var(--warn-soft); }
+
+  /* Token reference */
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th, td { text-align: left; padding: 8px 10px 8px 0; border-bottom: 1px solid var(--line); }
+  th { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  td.num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    white-space: nowrap;
+    padding-right: 0;
+  }
+  .scroller { overflow-x: auto; }
+
+  .notes { font-size: 13px; color: var(--muted); }
+  .notes ul { padding-left: 18px; margin: 8px 0 0; }
+  .notes li { margin-bottom: 6px; }
+  .notes strong { color: var(--fg); font-weight: 600; }
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+    background: var(--surface-2);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+  footer {
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  footer a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; }
+  footer a:hover { border-bottom-color: currentColor; }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="topbar">
+    <button id="themeToggle" class="theme-btn" type="button">Dunkel</button>
+  </div>
+
+  <p class="eyebrow">Gemini 4 Argon &middot; Pay-per-Token</p>
+  <h1>Was kostet Argon über die API?</h1>
+  <p class="lede">
+    Kein Abo, keine Grundgebühr: abgerechnet wird pro Token. Setz Deine Nutzung ein und
+    vergleich sie mit der Abo-Pauschale. Die Preisstufen vor und nach dem 1. Dezember 2026
+    stehen nebeneinander, weil sich der Satz dann verdoppelt.
+  </p>
+
+  <section>
+    <h2>Typische Profile</h2>
+    <div class="chips" id="presets"></div>
+  </section>
+
+  <section>
+    <h2>Deine Nutzung</h2>
+    <div class="panel">
+      <div class="grid">
+        <div class="field">
+          <label for="reqs">Anfragen pro Monat</label>
+          <input id="reqs" type="number" min="0" step="1" value="630" inputmode="numeric">
+          <span class="hint" id="reqsHint"></span>
+        </div>
+        <div class="field">
+          <label for="tin">Input-Tokens je Anfrage</label>
+          <input id="tin" type="number" min="0" step="100" value="3000" inputmode="numeric">
+          <span class="hint">Prompt + mitgeschickter Kontext</span>
+        </div>
+        <div class="field">
+          <label for="tout">Output-Tokens je Anfrage</label>
+          <input id="tout" type="number" min="0" step="100" value="1200" inputmode="numeric">
+          <span class="hint">Antwort inkl. Thinking-Tokens</span>
+        </div>
+        <div class="field">
+          <label for="cache">Gecachter Input-Anteil</label>
+          <input id="cache" type="number" min="0" max="100" step="5" value="0" inputmode="numeric">
+          <span class="hint">in Prozent &middot; 95 % günstiger</span>
+        </div>
+        <div class="field">
+          <label for="abo">Abo-Vergleichspreis</label>
+          <input id="abo" type="number" min="0" step="1" value="22" inputmode="decimal">
+          <span class="hint">Euro pro Monat</span>
+        </div>
+        <div class="field">
+          <label for="rate">Wechselkurs EUR je USD</label>
+          <input id="rate" type="number" min="0" step="0.01" value="0.92" inputmode="decimal">
+          <span class="hint">Annahme &mdash; bitte prüfen</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Monatliche Kosten</h2>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <section>
+    <div class="verdict" id="verdict"></div>
+  </section>
+
+  <section>
+    <h2>Tokens abschätzen</h2>
+    <div class="scroller">
+      <table>
+        <thead>
+          <tr><th>Textmenge</th><th>Faustregel</th><th class="num">Tokens</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Kurze Chat-Frage</td><td>ein bis zwei Sätze</td><td class="num">40</td></tr>
+          <tr><td>1.000 Wörter</td><td>1 Token &asymp; &frac34; Wort</td><td class="num">1.330</td></tr>
+          <tr><td>Eine DIN-A4-Seite</td><td>ca. 500 Wörter</td><td class="num">670</td></tr>
+          <tr><td>Transkript, 60 Min.</td><td>ca. 150 Wörter je Minute</td><td class="num">12.000</td></tr>
+          <tr><td>50-Seiten-Report</td><td>reiner Text, ohne Bilder</td><td class="num">33.500</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="notes">
+    <h2>Was die Rechnung nicht enthält</h2>
+    <ul>
+      <li><strong>Thinking-Tokens zählen als Output</strong> und damit zum teuren Satz. Bei schwierigen Aufgaben kann das Modell länger nachdenken, als Du eingeplant hast &mdash; rechne hier großzügig.</li>
+      <li><strong>Cache-Speicherung kostet extra.</strong> Die 95 % Rabatt gelten für gecachten Input; Google berechnet die Vorhaltung des Caches zusätzlich pro Token und Stunde. Bei kurzen Sitzungen fällt das kaum auf, bei dauerhaft vorgehaltenen Wissensbasen schon.</li>
+      <li><strong>Reseller rechnen anders ab.</strong> Über Databricks, OpenRouter und ähnliche Wege liegen die Sätze teils deutlich höher als bei Google direkt.</li>
+      <li><strong>Setz ein Budget-Limit.</strong> Die API hat von Haus aus keine Obergrenze. Ein Automatisierungsfehler in der Schleife erzeugt über Nacht dreistellige Beträge &mdash; siehe das letzte Profil oben.</li>
+      <li><strong>Für Gesundheitsdaten: Vertex AI statt AI Studio.</strong> Nur dort gibt es EU-Datenresidenz und einen Auftragsverarbeitungsvertrag. Die Token-Preise sind dieselben.</li>
+      <li>Alle Preise stammen aus Sekundärquellen (<code>$2</code>/<code>$10</code> bzw. <code>$4</code>/<code>$20</code> je Mio. Tokens) und sind auf Googles offizieller Preisseite zu bestätigen.</li>
+    </ul>
+  </section>
+
+  <footer>
+    Stand: November 2026 &middot; Preisangaben nach
+    <a href="https://venturebeat.com/technology/google-makes-gemini-4-argon-broadly-available-with-limited-time-low-api-pricing-of-2-10-per-1m-token" rel="noopener">VentureBeat</a>,
+    <a href="https://www.lindy.ai/blog/gemini-4-argon" rel="noopener">Lindy</a> und
+    <a href="https://models.litellm.ai/models/gemini-4-argon" rel="noopener">LiteLLM</a>
+    &mdash; nicht von Google bestätigt. Alle Rechnungen laufen im Browser, es werden keine Daten übertragen.
+  </footer>
+</div>
+
+<script>
+  var REGIMES = [
+    { key: 'now',   label: 'Jetzt &middot; bis 30.11.2026', inUsd: 2, outUsd: 10, cls: '' },
+    { key: 'later', label: 'Ab 01.12.2026',                 inUsd: 4, outUsd: 20, cls: 'card--later' }
+  ];
+
+  var PRESETS = [
+    { name: 'Chat-Assistent, täglich', reqs: 630,  tin: 3000,  tout: 1200, cache: 0 },
+    { name: 'Power-User, viel Kontext', reqs: 1260, tin: 8000,  tout: 2000, cache: 0 },
+    { name: 'Meeting-Pipeline',         reqs: 35,   tin: 13000, tout: 2500, cache: 0 },
+    { name: 'Dokumentenanalyse',        reqs: 20,   tin: 33500, tout: 3000, cache: 0 },
+    { name: 'Agent mit Wissensbasis',   reqs: 500,  tin: 30000, tout: 1500, cache: 85 },
+    { name: 'Workflow in Endlosschleife', reqs: 7200, tin: 5000, tout: 1500, cache: 0, warn: true }
+  ];
+
+  var nf = new Intl.NumberFormat('de-DE');
+  var nf1 = new Intl.NumberFormat('de-DE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+  function money(v, cur) {
+    return new Intl.NumberFormat('de-DE', {
+      style: 'currency', currency: cur,
+      minimumFractionDigits: 2, maximumFractionDigits: 2
+    }).format(v);
+  }
+  function perReq(usd) {
+    if (usd >= 1) return money(usd, 'USD');
+    return nf1.format(usd * 100) + ' ¢';
+  }
+  function num(id) {
+    var v = parseFloat(document.getElementById(id).value);
+    return isFinite(v) && v >= 0 ? v : 0;
+  }
+  function millions(t) { return t / 1e6; }
+
+  function calc(r, cfg) {
+    var inTotal = cfg.reqs * cfg.tin;
+    var cached = inTotal * (Math.min(cfg.cache, 100) / 100);
+    var fresh = inTotal - cached;
+    var outTotal = cfg.reqs * cfg.tout;
+    var cacheRate = r.inUsd * 0.05;           // 95 % Rabatt auf gecachten Input
+    var cFresh = millions(fresh) * r.inUsd;
+    var cCached = millions(cached) * cacheRate;
+    var cOut = millions(outTotal) * r.outUsd;
+    var total = cFresh + cCached + cOut;
+    return {
+      fresh: fresh, cached: cached, out: outTotal,
+      cFresh: cFresh, cCached: cCached, cOut: cOut,
+      total: total,
+      perReq: cfg.reqs > 0 ? total / cfg.reqs : 0
+    };
+  }
+
+  function row(k, v, cls) {
+    return '<div class="row ' + (cls || '') + '"><span class="k">' + k + '</span><span class="v">' + v + '</span></div>';
+  }
+
+  function render() {
+    var cfg = {
+      reqs: Math.round(num('reqs')),
+      tin: Math.round(num('tin')),
+      tout: Math.round(num('tout')),
+      cache: num('cache')
+    };
+    var aboEur = num('abo');
+    var rate = num('rate') || 0.92;
+    var aboUsd = aboEur / rate;
+
+    document.getElementById('reqsHint').textContent =
+      '≈ ' + nf.format(Math.round(cfg.reqs / 21)) + ' pro Arbeitstag (21 Tage)';
+
+    var results = {};
+    var html = '';
+    REGIMES.forEach(function (r) {
+      var res = calc(r, cfg);
+      results[r.key] = res;
+      var breakEven = res.perReq > 0 ? Math.floor(aboUsd / res.perReq) : 0;
+      html += '<div class="card ' + r.cls + '">' +
+        '<p class="regime">' + r.label + '</p>' +
+        '<p class="rates">$' + r.inUsd + ' / $' + r.outUsd + ' je Mio. Tokens</p>' +
+        '<div class="big">' + money(res.total, 'USD') + '</div>' +
+        '<div class="big-sub">' + money(res.total * rate, 'EUR') + ' pro Monat</div>' +
+        '<div class="rows">' +
+          row('Input, frisch', nf.format(Math.round(res.fresh)) + ' T &middot; ' + money(res.cFresh, 'USD')) +
+          (res.cached > 0 ? row('Input, gecacht', nf.format(Math.round(res.cached)) + ' T &middot; ' + money(res.cCached, 'USD')) : '') +
+          row('Output', nf.format(Math.round(res.out)) + ' T &middot; ' + money(res.cOut, 'USD')) +
+          row('Pro Anfrage', perReq(res.perReq), 'row--total') +
+          row('Abo-Niveau erreicht bei', nf.format(breakEven) + ' Anfragen') +
+        '</div>' +
+      '</div>';
+    });
+    document.getElementById('cards').innerHTML = html;
+
+    renderVerdict(results, cfg, aboEur, rate);
+  }
+
+  function renderVerdict(results, cfg, aboEur, rate) {
+    var el = document.getElementById('verdict');
+    var now = results.now.total * rate;
+    var later = results.later.total * rate;
+    var delta = later - now;
+
+    if (cfg.reqs === 0) {
+      el.className = 'verdict';
+      el.innerHTML = 'Ohne Anfragen kostet die API <strong>nichts</strong>. Genau das ist der Unterschied zum Abo: keine Grundgebühr.';
+      return;
+    }
+
+    var cheaper = later < aboEur;
+    var txt;
+    if (cheaper) {
+      txt = 'Bei diesem Profil bleibt die API <strong>auch nach der Preiserhöhung günstiger als das Abo</strong> ' +
+            '(' + money(later, 'EUR') + ' gegen ' + money(aboEur, 'EUR') + '). ';
+    } else if (now < aboEur) {
+      txt = 'Heute ist die API günstiger als das Abo, <strong>ab 1. Dezember kippt es</strong>: ' +
+            money(later, 'EUR') + ' gegen ' + money(aboEur, 'EUR') + ' Pauschale. ';
+    } else {
+      txt = 'Dieses Profil liegt <strong>schon jetzt über der Abo-Pauschale</strong> ' +
+            '(' + money(now, 'EUR') + ' gegen ' + money(aboEur, 'EUR') + '). ';
+    }
+    txt += 'Die Verdopplung am 1. Dezember kostet Dich hier <strong>' + money(delta, 'EUR') + ' mehr pro Monat</strong>.';
+
+    el.className = 'verdict' + (cheaper ? '' : ' is-warn');
+    el.innerHTML = txt;
+  }
+
+  // Presets
+  var presetBox = document.getElementById('presets');
+  PRESETS.forEach(function (p, i) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chip' + (p.warn ? ' chip--warn' : '');
+    b.textContent = p.name;
+    b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
+    b.addEventListener('click', function () {
+      document.getElementById('reqs').value = p.reqs;
+      document.getElementById('tin').value = p.tin;
+      document.getElementById('tout').value = p.tout;
+      document.getElementById('cache').value = p.cache;
+      Array.prototype.forEach.call(presetBox.children, function (c) {
+        c.setAttribute('aria-pressed', c === b ? 'true' : 'false');
+      });
+      render();
+    });
+    presetBox.appendChild(b);
+  });
+
+  ['reqs', 'tin', 'tout', 'cache', 'abo', 'rate'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', function () {
+      Array.prototype.forEach.call(presetBox.children, function (c) {
+        c.setAttribute('aria-pressed', 'false');
+      });
+      render();
+    });
+  });
+
+  // Theme toggle — ohne Host-Oberfläche entscheidet sonst nur die Systemeinstellung
+  (function () {
+    var btn = document.getElementById('themeToggle');
+    var mq = window.matchMedia('(prefers-color-scheme: dark)');
+
+    function effective() {
+      var t = document.documentElement.getAttribute('data-theme');
+      return t || (mq.matches ? 'dark' : 'light');
+    }
+    function label() {
+      btn.textContent = effective() === 'dark' ? 'Hell' : 'Dunkel';
+    }
+    try {
+      var saved = localStorage.getItem('argon-theme');
+      if (saved === 'dark' || saved === 'light') {
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    } catch (e) { /* Private Mode o. ä. — Systemeinstellung bleibt */ }
+
+    btn.addEventListener('click', function () {
+      var next = effective() === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('argon-theme', next); } catch (e) {}
+      label();
+    });
+    mq.addEventListener('change', label);
+    label();
+  })();
+
+  render();
+</script>
+</body>
+</html>
