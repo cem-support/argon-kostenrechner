@@ -394,20 +394,19 @@
     <h2>Was die Rechnung nicht enthält</h2>
     <ul>
       <li><strong>Thinking-Tokens zählen als Output</strong> und damit zum teuren Satz. Bei schwierigen Aufgaben kann das Modell länger nachdenken, als Du eingeplant hast &mdash; rechne hier großzügig.</li>
-      <li><strong>Cache-Speicherung kostet extra.</strong> Die 95 % Rabatt gelten für gecachten Input; Google berechnet die Vorhaltung des Caches zusätzlich pro Token und Stunde. Bei kurzen Sitzungen fällt das kaum auf, bei dauerhaft vorgehaltenen Wissensbasen schon.</li>
+      <li><strong>Caching läuft bei Argon nur implizit.</strong> Explizites Caching unterstützt das Modell nicht &mdash; dafür berechnet Google auch keine Speicherkosten. Ob ein Treffer zustande kommt, entscheidet Google, nicht Du. Der Regler oben zeigt also den Idealfall.</li>
+      <li><strong>Batch und Flex kosten die Hälfte.</strong> Wer auf sofortige Antwort verzichten kann, zahlt <code>$1</code>/<code>$5</code> statt <code>$2</code>/<code>$10</code> je Mio. Tokens, ab 1. Dezember <code>$2</code>/<code>$10</code> statt <code>$4</code>/<code>$20</code>. Für Stapelverarbeitung wie Transkript-Pipelines halbiert das jede Rechnung oben.</li>
+      <li><strong>Argon läuft nicht im kostenlosen Kontingent.</strong> Ein zahlungspflichtiges Konto ist Voraussetzung, und jeder Token wird berechnet &mdash; auch Thinking-Tokens und interne Werkzeug-Deklarationen.</li>
       <li><strong>Reseller rechnen anders ab.</strong> Über Databricks, OpenRouter und ähnliche Wege liegen die Sätze teils deutlich höher als bei Google direkt.</li>
       <li><strong>Setz ein Budget-Limit.</strong> Die API hat von Haus aus keine Obergrenze. Ein Automatisierungsfehler in der Schleife erzeugt über Nacht dreistellige Beträge &mdash; siehe das letzte Profil oben.</li>
-      <li><strong>Für Gesundheitsdaten: Vertex AI statt AI Studio.</strong> Nur dort gibt es EU-Datenresidenz und einen Auftragsverarbeitungsvertrag. Die Token-Preise sind dieselben.</li>
-      <li>Alle Preise stammen aus Sekundärquellen (<code>$2</code>/<code>$10</code> bzw. <code>$4</code>/<code>$20</code> je Mio. Tokens) und sind auf Googles offizieller Preisseite zu bestätigen.</li>
+      <li><strong>Für Gesundheitsdaten: Vertex AI statt AI Studio.</strong> Nur dort gibt es EU-Datenresidenz und einen Auftragsverarbeitungsvertrag. Die Vertex-Preisseite war beim Abgleich nicht abrufbar &mdash; ob die Token-Preise dort identisch sind, bitte selbst prüfen.</li>
     </ul>
   </section>
 
   <footer>
-    Stand: November 2026 &middot; Preisangaben nach
-    <a href="https://venturebeat.com/technology/google-makes-gemini-4-argon-broadly-available-with-limited-time-low-api-pricing-of-2-10-per-1m-token" rel="noopener">VentureBeat</a>,
-    <a href="https://www.lindy.ai/blog/gemini-4-argon" rel="noopener">Lindy</a> und
-    <a href="https://models.litellm.ai/models/gemini-4-argon" rel="noopener">LiteLLM</a>
-    &mdash; nicht von Google bestätigt. Alle Rechnungen laufen im Browser, es werden keine Daten übertragen.
+    Stand: 3. November 2026 &middot; Sätze des Standard-Tiers, geprüft gegen
+    <a href="https://aistudio.google.com/docs/pricing" rel="noopener">Googles offizielle Preisseite</a>.
+    Alle Rechnungen laufen im Browser, es werden keine Daten übertragen.
   </footer>
 </div>
 

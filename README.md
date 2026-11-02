@@ -27,22 +27,33 @@ Output-Tokens je Anfrage und gecachtem Input-Anteil. Alle Werte sind frei
 
 ## Preisgrundlage
 
+Standard-Tier, USD je 1 Mio. Tokens:
+
 | | bis 30.11.2026 | ab 01.12.2026 |
 | --- | --- | --- |
-| Input | $2 / 1 Mio. Tokens | $4 / 1 Mio. Tokens |
-| Output (inkl. Thinking) | $10 / 1 Mio. Tokens | $20 / 1 Mio. Tokens |
-| Gecachter Input | 95 % Rabatt | 95 % Rabatt |
+| Input | $2,00 | $4,00 |
+| Output (inkl. Thinking-Tokens) | $10,00 | $20,00 |
+| Gecachter Input | $0,10 | $0,20 |
 
-Die Sätze stammen aus Sekundärquellen ([VentureBeat][vb], [Lindy][lindy],
-[LiteLLM][ll]) und sind **nicht von Google bestätigt**. Vor einer
-Kostenentscheidung auf Googles offizieller Preisseite prüfen.
+Geprüft am 03.11.2026 gegen [Googles offizielle Preisseite][g].
 
-Nicht enthalten: die Speicherkosten des Kontext-Caches (pro Token und Stunde),
-abweichende Reseller-Tarife und Steuern.
+Argon ist im kostenlosen Kontingent **nicht** enthalten. Caching läuft nur
+implizit — explizites Caching unterstützt das Modell nicht, dafür weist Google
+für Argon auch keine Cache-Speicherkosten aus.
 
-[vb]: https://venturebeat.com/technology/google-makes-gemini-4-argon-broadly-available-with-limited-time-low-api-pricing-of-2-10-per-1m-token
-[lindy]: https://www.lindy.ai/blog/gemini-4-argon
-[ll]: https://models.litellm.ai/models/gemini-4-argon
+Dieselbe Arbeit in anderen Tiers:
+
+| Tier | bis 30.11.2026 | ab 01.12.2026 |
+| --- | --- | --- |
+| Batch / Flex | $1 / $5 | $2 / $10 |
+| Standard | $2 / $10 | $4 / $20 |
+| Priority | $3,60 / $18 | $7,20 / $36 |
+
+Nicht enthalten: abweichende Reseller-Tarife, Grounding-Anfragen und Steuern.
+Die Vertex-AI-Preisseite war beim Abgleich nicht abrufbar; ob die Sätze dort
+identisch sind, ist offen.
+
+[g]: https://aistudio.google.com/docs/pricing
 
 ## Lokal öffnen
 
