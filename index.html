@@ -399,13 +399,15 @@
       <li><strong>Argon läuft nicht im kostenlosen Kontingent.</strong> Ein zahlungspflichtiges Konto ist Voraussetzung, und jeder Token wird berechnet &mdash; auch Thinking-Tokens und interne Werkzeug-Deklarationen.</li>
       <li><strong>Reseller rechnen anders ab.</strong> Über Databricks, OpenRouter und ähnliche Wege liegen die Sätze teils deutlich höher als bei Google direkt.</li>
       <li><strong>Setz ein Budget-Limit.</strong> Die API hat von Haus aus keine Obergrenze. Ein Automatisierungsfehler in der Schleife erzeugt über Nacht dreistellige Beträge &mdash; siehe das letzte Profil oben.</li>
-      <li><strong>Für Gesundheitsdaten: Vertex AI statt AI Studio.</strong> Nur dort gibt es EU-Datenresidenz und einen Auftragsverarbeitungsvertrag. Die Vertex-Preisseite war beim Abgleich nicht abrufbar &mdash; ob die Token-Preise dort identisch sind, bitte selbst prüfen.</li>
+      <li><strong>Für Gesundheitsdaten: Vertex AI statt AI Studio</strong> &mdash; nur dort gibt es EU-Datenresidenz und einen Auftragsverarbeitungsvertrag. Am globalen Endpunkt sind die Sätze identisch. Ein regionaler Endpunkt, den EU-Datenresidenz voraussetzt, kostet aber <strong>10 % mehr</strong>: $2,20 / $11,00 statt $2,00 / $10,00, ab 1. Dezember $4,40 / $22,00. Rechne auf jede Summe oben also zehn Prozent drauf.</li>
+      <li><strong>Bei Vertex ist der Aktionspreis eine Gutschrift.</strong> Dort werden die vollen Sätze abgerechnet und 50 % der Nettoausgaben als Guthaben zurückgebucht &mdash; das Geld fließt also erst ab und später zurück. Die Variante „Argon Cyber Permissive“ ist davon ausgenommen.</li>
     </ul>
   </section>
 
   <footer>
-    Stand: 3. November 2026 &middot; Sätze des Standard-Tiers, geprüft gegen
-    <a href="https://aistudio.google.com/docs/pricing" rel="noopener">Googles offizielle Preisseite</a>.
+    Stand: 3. November 2026 &middot; Sätze des Standard-Tiers am globalen Endpunkt, geprüft gegen
+    <a href="https://aistudio.google.com/docs/pricing" rel="noopener">AI Studio</a> und
+    <a href="https://cloud.google.com/model-garden/pricing" rel="noopener">Vertex AI</a>.
     Alle Rechnungen laufen im Browser, es werden keine Daten übertragen.
   </footer>
 </div>

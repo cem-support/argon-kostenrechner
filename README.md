@@ -49,11 +49,32 @@ Dieselbe Arbeit in anderen Tiers:
 | Standard | $2 / $10 | $4 / $20 |
 | Priority | $3,60 / $18 | $7,20 / $36 |
 
+### Vertex AI
+
+Laut [Vertex-Preisseite][v] sind die Sätze am **globalen** Endpunkt identisch
+mit AI Studio. Ein **regionaler** Endpunkt — Voraussetzung für EU-Datenresidenz
+und damit für Gesundheitsdaten — kostet 10 % mehr:
+
+| | bis 30.11.2026 | ab 01.12.2026 |
+| --- | --- | --- |
+| Eingabe, global | $2,00 | $4,00 |
+| Eingabe, nicht global | $2,20 | $4,40 |
+| Ausgabe, global | $10,00 | $20,00 |
+| Ausgabe, nicht global | $11,00 | $22,00 |
+
+Der Aktionspreis wird bei Vertex nicht als niedrigerer Listenpreis gewährt,
+sondern als Gutschrift von 50 % auf die Nettoausgaben. Die Variante
+„Argon Cyber Permissive" ist davon ausgenommen.
+
+Zwei weitere Fußnoten der Vertex-Seite: Bei einem Eingabekontext über 200.000
+Tokens werden **alle** Tokens zu Long-Context-Tarifen abgerechnet, und ab dem
+13.11.2026 werden Vervollständigungen über 32.000 Tokens auch dann berechnet,
+wenn die Anfrage an einem Timeout scheitert.
+
 Nicht enthalten: abweichende Reseller-Tarife, Grounding-Anfragen und Steuern.
-Die Vertex-AI-Preisseite war beim Abgleich nicht abrufbar; ob die Sätze dort
-identisch sind, ist offen.
 
 [g]: https://aistudio.google.com/docs/pricing
+[v]: https://cloud.google.com/model-garden/pricing
 
 ## Lokal öffnen
 
